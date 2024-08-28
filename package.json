@@ -1,0 +1,32 @@
+{
+  "name": "libary",
+  "version": "1.0.0",
+  "description": "Its my JS project ",
+  "main": "index.js",
+  "type":"module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "live-server",
+    "build": "rollup -c --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SnGermen/Libary-.git"
+  },
+  "keywords": [
+    "book"
+  ],
+  "author": "Germen Songa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SnGermen/Libary-/issues"
+  },
+  "homepage": "https://github.com/SnGermen/Libary-#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
+    "rollup-plugin-import-css": "^3.5.1"
+  }
+}
