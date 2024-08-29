@@ -1,5 +1,5 @@
 
-import { MainView } from './views/main.js'
+import { MainView } from './views/main/main.js'
 class App {
   routes = [
     { path: "", view: MainView }
@@ -14,12 +14,14 @@ class App {
     if (this.currentView) {
       this.currentView.destroy()
     }
+    console.log('1')
+
     const view = this.routes.find(r => r.path == location.hash).view
     this.currentView = new view()
     this.currentView.render()
   }
 }
 
+console.log('aaaa')
 
 new App()
-console.log('aaaa')

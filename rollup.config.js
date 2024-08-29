@@ -1,5 +1,5 @@
 import css from "rollup-plugin-import-css"
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 
 export default {
