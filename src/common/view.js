@@ -8,6 +8,7 @@ export class AbstractiveView {
   }
 
   render() {
+    console.log("Absrtact")
     return
   }
 

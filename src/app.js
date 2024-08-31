@@ -10,13 +10,12 @@ class App {
     this.route
   }
 
-  route() { // Исправлено: rote -> route
+  route() {
     if (this.currentView) {
       this.currentView.destroy()
     }
-    console.log('1')
-
     const view = this.routes.find(r => r.path == location.hash).view
+    console.log(view)
     this.currentView = new view()
     this.currentView.render()
   }
