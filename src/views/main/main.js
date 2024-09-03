@@ -6,14 +6,11 @@ export class MainView extends AbstractiveView {
     this.setTitle("Book Search")
   }
 
-
   render() {
-    let main = document.createElement("div");
-
-    main.innerHTML = "Тест"; // Возможно, вы хотели написать "Test"
-    this.app.innerHTML = ""; // Очистка содержимого this.app
-    this.app.append(main); // Добавление нового элемента в this.app 
-
+    const main = document.createElement('div');
+    main.innerHTML = "Тест";
+    this.app.innerHTML = "";
+    this.app.append(main);
 
   }
 }
