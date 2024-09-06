@@ -44,7 +44,7 @@
   }
 
   const path = {
-  	after(path, subPath) {
+  	after: (path, subPath) => {
   		if (isArray(path)) {
   			return path.slice(subPath.length);
   		}
@@ -55,7 +55,7 @@
 
   		return path.slice(subPath.length + 1);
   	},
-  	concat(path, key) {
+  	concat: (path, key) => {
   		if (isArray(path)) {
   			path = [...path];
 
@@ -80,7 +80,7 @@
 
   		return path;
   	},
-  	initial(path) {
+  	initial: path => {
   		if (isArray(path)) {
   			return path.slice(0, -1);
   		}
@@ -97,9 +97,9 @@
 
   		return path.slice(0, index);
   	},
-  	last(path) {
+  	last: path => {
   		if (isArray(path)) {
-  			return path.at(-1) ?? '';
+  			return path[path.length - 1] || '';
   		}
 
   		if (path === '') {
@@ -114,7 +114,7 @@
 
   		return path.slice(index + 1);
   	},
-  	walk(path, callback) {
+  	walk: (path, callback) => {
   		if (isArray(path)) {
   			for (const key of path) {
   				callback(key);
@@ -148,43 +148,6 @@
 
   		return object;
   	},
-  	isSubPath(path, subPath) {
-  		if (isArray(path)) {
-  			if (path.length < subPath.length) {
-  				return false;
-  			}
-
-  			// eslint-disable-next-line unicorn/no-for-loop
-  			for (let i = 0; i < subPath.length; i++) {
-  				if (path[i] !== subPath[i]) {
-  					return false;
-  				}
-  			}
-
-  			return true;
-  		}
-
-  		if (path.length < subPath.length) {
-  			return false;
-  		}
-
-  		if (path === subPath) {
-  			return true;
-  		}
-
-  		if (path.startsWith(subPath)) {
-  			return path[subPath.length] === PATH_SEPARATOR;
-  		}
-
-  		return false;
-  	},
-  	isRootPath(path) {
-  		if (isArray(path)) {
-  			return path.length === 0;
-  		}
-
-  		return path === '';
-  	},
   };
 
   function isIterator(value) {
@@ -192,7 +155,7 @@
   }
 
   // eslint-disable-next-line max-params
-  function wrapIterator(iterator, target, thisArgument, applyPath, prepareValue) {
+  function wrapIterator(iterator, target, thisArg, applyPath, prepareValue) {
   	const originalNext = iterator.next;
 
   	if (target.name === 'entries') {
@@ -217,7 +180,7 @@
   			return result;
   		};
   	} else if (target.name === 'values') {
-  		const keyIterator = thisArgument[TARGET].keys();
+  		const keyIterator = thisArg[TARGET].keys();
 
   		iterator.next = function () {
   			const result = originalNext.call(this);
@@ -314,7 +277,7 @@
   		}
 
   		const reflectTarget = target[proxyTarget];
-  		const source = reflectTarget ?? target;
+  		const source = reflectTarget || target;
 
   		this._pathCache.set(source, path);
 
@@ -569,7 +532,7 @@
   		return clone;
   	}
 
-  	preferredThisArg(isHandledMethod, name, thisArgument, thisProxyTarget) {
+  	preferredThisArg(isHandledMethod, name, thisArg, thisProxyTarget) {
   		if (isHandledMethod) {
   			if (isArray(thisProxyTarget)) {
   				this._onIsChanged = MUTABLE_ARRAY_METHODS[name];
@@ -582,7 +545,7 @@
   			return thisProxyTarget;
   		}
 
-  		return thisArgument;
+  		return thisArg;
   	}
 
   	update(fullPath, property, value) {
@@ -592,7 +555,7 @@
   			let object = this.clone;
 
   			path.walk(changePath, key => {
-  				if (object?.[key]) {
+  				if (object && object[key]) {
   					if (!this._clonedCache.has(object[key])) {
   						object[key] = this._shallowClone(object[key]);
   					}
@@ -609,7 +572,7 @@
   				});
   			}
 
-  			if (object?.[property]) {
+  			if (object && object[property]) {
   				object[property] = value;
   			}
   		}
@@ -631,10 +594,6 @@
   		return this._onIsChanged === undefined
   			? this._isChanged
   			: this._onIsChanged(this.clone, value);
-  	}
-
-  	isPathApplicable(changePath) {
-  		return path.isRootPath(this._path) || path.isSubPath(changePath, this._path);
   	}
   }
 
@@ -694,19 +653,19 @@
   	constructor(value, path, argumentsList, hasOnValidate) {
   		super(undefined, path, argumentsList, hasOnValidate);
 
-  		this._argument1 = argumentsList[0];
-  		this._weakValue = value.has(this._argument1);
+  		this._arg1 = argumentsList[0];
+  		this._weakValue = value.has(this._arg1);
   	}
 
   	isChanged(value) {
-  		return this._weakValue !== value.has(this._argument1);
+  		return this._weakValue !== value.has(this._arg1);
   	}
 
   	undo(object) {
-  		if (this._weakValue && !object.has(this._argument1)) {
-  			object.add(this._argument1);
+  		if (this._weakValue && !object.has(this._arg1)) {
+  			object.add(this._arg1);
   		} else {
-  			object.delete(this._argument1);
+  			object.delete(this._arg1);
   		}
   	}
   }
@@ -794,23 +753,19 @@
   	}
 
   	update(fullPath, property, value) {
-  		this._stack.at(-1).update(fullPath, property, value);
+  		this._stack[this._stack.length - 1].update(fullPath, property, value);
   	}
 
-  	preferredThisArg(target, thisArgument, thisProxyTarget) {
+  	preferredThisArg(target, thisArg, thisProxyTarget) {
   		const {name} = target;
   		const isHandledMethod = SmartClone.isHandledMethod(thisProxyTarget, name);
 
-  		return this._stack.at(-1)
-  			.preferredThisArg(isHandledMethod, name, thisArgument, thisProxyTarget);
+  		return this._stack[this._stack.length - 1]
+  			.preferredThisArg(isHandledMethod, name, thisArg, thisProxyTarget);
   	}
 
   	isChanged(isMutable, value, equals) {
-  		return this._stack.at(-1).isChanged(isMutable, value, equals);
-  	}
-
-  	isPartOfClone(changePath) {
-  		return this._stack.at(-1).isPathApplicable(changePath);
+  		return this._stack[this._stack.length - 1].isChanged(isMutable, value, equals);
   	}
 
   	undo(object) {
@@ -866,7 +821,7 @@
 
   	// eslint-disable-next-line max-params
   	const handleChange = (changePath, property, value, previous, applyData) => {
-  		if (smartClone.isCloning && smartClone.isPartOfClone(changePath)) {
+  		if (smartClone.isCloning) {
   			smartClone.update(changePath, property, previous);
   		} else {
   			onChange(path.concat(changePath, property), value, previous, applyData);
@@ -874,7 +829,7 @@
   	};
 
   	const getProxyTarget = value => value
-  		? (value[proxyTarget] ?? value)
+  		? (value[proxyTarget] || value)
   		: value;
 
   	const prepareValue = (value, target, property, basePath) => {
@@ -893,52 +848,7 @@
   			basePath = cache.getPath(target);
   		}
 
-  		/*
-    		Check for circular references.
-
-    		If the value already has a corresponding path/proxy,
-  		and if the path corresponds to one of the parents,
-  		then we are on a circular case, where the child is pointing to their parent.
-  		In this case we return the proxy object with the shortest path.
-    		*/
-  		const childPath = path.concat(basePath, property);
-  		const existingPath = cache.getPath(value);
-
-  		if (existingPath && isSameObjectTree(childPath, existingPath)) {
-  			// We are on the same object tree but deeper, so we use the parent path.
-  			return cache.getProxy(value, existingPath, handler, proxyTarget);
-  		}
-
-  		return cache.getProxy(value, childPath, handler, proxyTarget);
-  	};
-
-  	/*
-  	Returns true if `childPath` is a subpath of `existingPath`
-  	(if childPath starts with existingPath). Otherwise, it returns false.
-
-   	It also returns false if the 2 paths are identical.
-
-   	For example:
-  	- childPath    = group.layers.0.parent.layers.0.value
-  	- existingPath = group.layers.0.parent
-  	*/
-  	const isSameObjectTree = (childPath, existingPath) => {
-  		if (isSymbol(childPath) || childPath.length <= existingPath.length) {
-  			return false;
-  		}
-
-  		if (isArray(existingPath) && existingPath.length === 0) {
-  			return false;
-  		}
-
-  		const childParts = isArray(childPath) ? childPath : childPath.split(PATH_SEPARATOR);
-  		const existingParts = isArray(existingPath) ? existingPath : existingPath.split(PATH_SEPARATOR);
-
-  		if (childParts.length <= existingParts.length) {
-  			return false;
-  		}
-
-  		return !(existingParts.some((part, index) => part !== childParts[index]));
+  		return cache.getProxy(value, path.concat(basePath, property), handler, proxyTarget);
   	};
 
   	const handler = {
@@ -968,7 +878,7 @@
   		set(target, property, value, receiver) {
   			value = getProxyTarget(value);
 
-  			const reflectTarget = target[proxyTarget] ?? target;
+  			const reflectTarget = target[proxyTarget] || target;
   			const previous = reflectTarget[property];
 
   			if (equals(previous, value) && property in target) {
@@ -1025,7 +935,7 @@
   		},
 
   		apply(target, thisArg, argumentsList) {
-  			const thisProxyTarget = thisArg[proxyTarget] ?? thisArg;
+  			const thisProxyTarget = thisArg[proxyTarget] || thisArg;
 
   			if (cache.isUnsubscribed) {
   				return Reflect.apply(target, thisProxyTarget, argumentsList);
@@ -1104,8 +1014,8 @@
   	return proxy;
   };
 
-  onChange.target = proxy => proxy?.[TARGET] ?? proxy;
-  onChange.unsubscribe = proxy => proxy?.[UNSUBSCRIBE] ?? proxy;
+  onChange.target = proxy => (proxy && proxy[TARGET]) || proxy;
+  onChange.unsubscribe = proxy => proxy[UNSUBSCRIBE] || proxy;
 
   class MainView extends AbstractiveView {
     state = {

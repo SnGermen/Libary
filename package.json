@@ -30,6 +30,7 @@
     "rollup-plugin-import-css": "^3.5.1"
   },
   "dependencies": {
-    "on-change": "^5.0.1"
+    "on-change": "^4.0.2",
+    "rollup": "^3.14.0"
   }
 }
