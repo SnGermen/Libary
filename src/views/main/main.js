@@ -23,7 +23,7 @@ export class MainView extends AbstractiveView {
     main.innerHTML = `Number of Books : ${this.appState.favorites.length}`;
     this.app.innerHTML = "";
     this.app.append(main);
-    this.appState.favorites.push(6)
+    this.appState.favorites.push('i')
   }
 }
 

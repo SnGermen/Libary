@@ -26,11 +26,12 @@
     "@eslint/js": "^9.9.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "eslint": "^9.9.1",
+    "eslint-plugin-unicorn": "^55.0.0",
     "globals": "^15.9.0",
     "rollup-plugin-import-css": "^3.5.1"
   },
   "dependencies": {
-    "on-change": "^4.0.2",
+    "on-change": "4.0.2",
     "rollup": "^3.14.0"
   }
 }
