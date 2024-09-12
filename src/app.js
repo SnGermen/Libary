@@ -3,7 +3,6 @@ import { MainView } from './views/main/main.js'
 class App extends MainView {
   routes = [
     { path: "", view: MainView },
-    console.log('aaaaaaa')
 
   ]
 
@@ -15,7 +14,7 @@ class App extends MainView {
     super()
     this.render()
     window.addEventListener("hashchange", this.route.bind(this))
-    this.route
+    this.route()
   }
 
   route() {
@@ -25,7 +24,6 @@ class App extends MainView {
     const view = this.routes.find(r => r.path == location.hash).view
     this.currentView = new view(this.appState)
     this.currentView.render()
-    console.log(view)
   }
 }
 

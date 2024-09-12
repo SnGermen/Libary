@@ -7,7 +7,7 @@ export class MainView extends AbstractiveView {
     searchQuery: undefined,
     offset: 0,
   }
-  constructor(appState) {
+  constructor(appState = {}) {
     super()
     this.appState = appState
     this.appState = onChange(this.appState, this.appStateHook.bind(this))
@@ -19,11 +19,15 @@ export class MainView extends AbstractiveView {
   }
 
   render() {
-    const main = document.createElement('div');
-    main.innerHTML = `Number of Books : ${this.appState.favorites.length}`;
-    this.app.innerHTML = "";
-    this.app.append(main);
-    this.appState.favorites.push('i')
+    if (this?.appState?.favorites) {
+      const main = document.createElement('div');
+      main.innerHTML = `Number of Books : ${this.appState.favorites.length}`;
+      this.app.innerHTML = "";
+      this.app.append(main);
+      this.appState.favorites.push('i')
+    } else {
+      console.error('favorites is non defined')
+    }
   }
 }
 
