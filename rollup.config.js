@@ -1,12 +1,18 @@
-import css from "rollup-plugin-import-css"
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-
+import postcss from 'rollup-plugin-postcss';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
-  input: "src/app.js",
+  input: 'src/app.js',  // основной JS-файл
   output: {
-    dir: "dist",
-    format: "iife"
+    dir: 'dist',  // папка для выходных файлов
+    format: 'iife'  // формат бандла
   },
-  plugins: [css(), nodeResolve()]
-}
+  plugins: [
+    postcss({
+      extract: true,    // Собирает все CSS в один файл
+      minimize: true,   // Минифицирует CSS
+      sourceMap: true   // Создает карту источников (source map)
+    }),
+    nodeResolve()  // Плагин для разрешения модулей
+  ]
+};
