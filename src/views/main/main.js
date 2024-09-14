@@ -1,5 +1,6 @@
 import { AbstractiveView } from '../../common/view.js';
 import onChange from 'on-change';
+import { Header } from '../../components/header/header.js';
 export class MainView extends AbstractiveView {
   state = {
     list: [],
@@ -21,13 +22,18 @@ export class MainView extends AbstractiveView {
   render() {
     if (this?.appState?.favorites) {
       const main = document.createElement('div');
-      main.innerHTML = `Number of Books : ${this.appState.favorites.length}`;
       this.app.innerHTML = "";
       this.app.append(main);
+      this.renderHeader()
       this.appState.favorites.push('i')
     } else {
       console.error('favorites is non defined')
     }
-  }
-}
 
+  }
+  renderHeader() {
+    const header = new Header(this.appState).render()
+    this.app.prepend(header)
+  }
+
+}
