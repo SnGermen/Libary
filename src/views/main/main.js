@@ -1,6 +1,7 @@
 import { AbstractiveView } from '../../common/view.js';
 import onChange from 'on-change';
 import { Header } from '../../components/header/header.js';
+import { Search } from '../../components/search/search.js';
 export class MainView extends AbstractiveView {
   state = {
     list: [],
@@ -22,6 +23,7 @@ export class MainView extends AbstractiveView {
   render() {
     if (this?.appState?.favorites) {
       const main = document.createElement('div');
+      main.append(new Search(this.state).render())
       this.app.innerHTML = "";
       this.app.append(main);
       this.renderHeader()
