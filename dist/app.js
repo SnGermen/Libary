@@ -11,7 +11,6 @@
     }
 
     render() {
-      console.log("Absrtact");
       return
     }
 
@@ -1032,6 +1031,8 @@
       this.appState = appState;
     }
 
+
+
     render() {
       this.el.classList.add("header");
       this.el.innerHTML = `
@@ -1092,14 +1093,35 @@
     }
   }
 
+  class CardList extends DivComponent {
+    constructor(appState, parentState) {
+      super();
+      this.appState = appState;
+      this.parentState = parentState;
+
+    }
+
+    render() {
+      if (this.parentState.loading) {
+        this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`;
+        return this.el
+      }
+      this.el.classList.add("card_list");
+      this.el.innerHTML = `<h1>Books found:${this.parentState.list.length}</h1>`;
+      return this.el
+    }
+  }
+
   class MainView extends AbstractiveView {
     state = {
-      list: [],
       loading: false,
       searchQuery: undefined,
       offset: 0,
       q: "",
+      list: [],
+
     }
+
     constructor(appState = {}) {
       super();
       this.appState = appState;
@@ -1122,6 +1144,9 @@
         this.state.list = data;
 
       }
+      if (path === "list" || path === "loading") {
+        this.render();
+      }
     }
 
     async loadList(q, offset) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
@@ -1139,6 +1164,8 @@
       if (this?.appState?.favorites) {
         const main = document.createElement('div');
         main.append(new Search(this.state).render());
+        main.append(new CardList(this.appState, this.state).render());
+
         this.app.innerHTML = "";
         this.app.append(main);
         this.renderHeader();
@@ -1151,6 +1178,7 @@
     renderHeader() {
       const header = new Header(this.appState).render();
       this.app.prepend(header);
+
     }
 
   }

@@ -2,14 +2,17 @@ import { AbstractiveView } from '../../common/view.js';
 import onChange from 'on-change';
 import { Header } from '../../components/header/header.js';
 import { Search } from '../../components/search/search.js';
+import { CardList } from '../../components/card-list/card-list.js';
 export class MainView extends AbstractiveView {
   state = {
-    list: [],
     loading: false,
     searchQuery: undefined,
     offset: 0,
     q: "",
+    list: [],
+
   }
+
   constructor(appState = {}) {
     super()
     this.appState = appState
@@ -32,6 +35,9 @@ export class MainView extends AbstractiveView {
       this.state.list = data
 
     }
+    if (path === "list" || path === "loading") {
+      this.render()
+    }
   }
 
   async loadList(q, offset) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
@@ -49,6 +55,8 @@ export class MainView extends AbstractiveView {
     if (this?.appState?.favorites) {
       const main = document.createElement('div');
       main.append(new Search(this.state).render())
+      main.append(new CardList(this.appState, this.state).render())
+
       this.app.innerHTML = "";
       this.app.append(main);
       this.renderHeader()
@@ -61,6 +69,7 @@ export class MainView extends AbstractiveView {
   renderHeader() {
     const header = new Header(this.appState).render()
     this.app.prepend(header)
+
   }
 
 }
