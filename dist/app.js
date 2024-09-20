@@ -1101,13 +1101,16 @@
 
     }
 
+
+
     render() {
       if (this.parentState.loading) {
         this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`;
         return this.el
       }
+      console.log(this.parentState.list, "render");
       this.el.classList.add("card_list");
-      this.el.innerHTML = `<h1>Books found:${this.parentState.list.length}</h1>`;
+      this.el.innerHTML = `<h1>Books found:${this.parentState.list?.length || 0}</h1>`;
       return this.el
     }
   }
@@ -1119,7 +1122,7 @@
       offset: 0,
       q: "",
       list: [],
-
+      numFound: 0,
     }
 
     constructor(appState = {}) {
@@ -1140,8 +1143,10 @@
         this.state.loading = true;
         const data = await this.loadList(this.state.searchQuery, this.state.offset);
         this.state.loading = false;
-        console.log(data);
-        this.state.list = data;
+        console.log(data, 'stateHook');
+        this.state.list = data?.docs || [];
+        this.state.numFound = data?.num_found || 0;
+
 
       }
       if (path === "list" || path === "loading") {

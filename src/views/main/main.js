@@ -10,7 +10,7 @@ export class MainView extends AbstractiveView {
     offset: 0,
     q: "",
     list: [],
-
+    numFound: 0,
   }
 
   constructor(appState = {}) {
@@ -31,8 +31,10 @@ export class MainView extends AbstractiveView {
       this.state.loading = true
       const data = await this.loadList(this.state.searchQuery, this.state.offset)
       this.state.loading = false
-      console.log(data)
-      this.state.list = data
+      console.log(data, 'stateHook')
+      this.state.list = data?.docs || []
+      this.state.numFound = data?.num_found || 0
+
 
     }
     if (path === "list" || path === "loading") {
