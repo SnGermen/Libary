@@ -11,6 +11,7 @@ class App extends MainView {
   }
 
   constructor() {
+    console.log("init")
     super()
     this.render()
     window.addEventListener("hashchange", this.route.bind(this))
