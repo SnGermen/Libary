@@ -1166,10 +1166,10 @@
       console.log("Fetching data for:", search, offset);
       try {
         const res = await fetch(`https://gutendex.com/books/?search=${search}`, {
-          // headers: {
-          //   'Content-Type': 'application/json',
-          //   Origin: 'http://localhost:5500/index.html',
-          // }
+          headers: {
+            'Content-Type': 'application/json',
+            Origin: 'http://localhost:5500/index.html',
+          }
         });
 
         // if (!res.ok) {
