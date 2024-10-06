@@ -1183,6 +1183,7 @@
         console.log("Error fetching data:", error);
         return { results: [], count: 0 }  // Возвращаем пустые результаты при ошибке
       }
+
     }
 
     render() {
