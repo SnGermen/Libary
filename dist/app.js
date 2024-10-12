@@ -1156,8 +1156,10 @@
 
     async loadList(q, offset) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
       try {
-        const res = await fetch(`https://openlibrary.org/search.json?q=${q}&offset=${offset}`);
+        const res = await fetch(`https://gutendex.com/books/?search=${q}&page=${offset}`);
+        console.log("res", res);
         return res.json()
+
 
       } catch (error) {
         console.log(error, 'PIZDA');
