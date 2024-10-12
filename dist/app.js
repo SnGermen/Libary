@@ -1044,17 +1044,18 @@
     <a href = "#" class="menu__item">
       <img src="static/search.png" alt="search_icon" class="menu_search">
       Book search
+      <img src="static/favorites.png" alt="favorites_icon" class="menu_favorites">
     </a>
     <a href = "#" class="menu__item">
-      <img src="static/favorites.png" alt="favorites_icon" class="menu_favorites">
       Favorites
       <div class="menu__counter">
-        ${this.appState.favorites.length}
+        ${this.appState.favorites.length || "Nety"}
+        
       </div>
     </a>
 
   </div>
-`;
+`   ; console.log("Nety", this.appState);
       return this.el
     }
   }
@@ -1065,7 +1066,7 @@
       this.state = state;
     }
 
-    search(){
+    search() {
       const value = this.el.querySelector("input").value;
       this.state.searchQuery = value;
     }
@@ -1083,8 +1084,8 @@
   <button aria-label='looking for'><img src="static/searcherWhite.png" alt="loop icon"></button>
 `;
       this.el.querySelector("button").addEventListener("click", this.search.bind(this));
-      this.el.querySelector("input").addEventListener("keydown", (event)=>{
-        if(event.code === "Enter"){
+      this.el.querySelector("input").addEventListener("keydown", (event) => {
+        if (event.code === "Enter") {
           this.search();
         }
       });
@@ -1094,6 +1095,7 @@
   }
 
   class CardList extends DivComponent {
+
     constructor(appState, parentState) {
       super();
       this.appState = appState;
@@ -1101,28 +1103,32 @@
 
     }
 
-
-
     render() {
       if (this.parentState.loading) {
         this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`;
         return this.el
       }
-      console.log(this.parentState.list, "render");
+
       this.el.classList.add("card_list");
-      this.el.innerHTML = `<h1>Books found:${this.parentState.list?.length || 0}</h1>`;
+      this.el.innerHTML = `<h1>Books found:${this.parentState.count || 0}</h1>`;
+      console.log("found", this.parentState);
+
+      // for (const card of this.parentState.list) {
+      //   this.el.append(new Card(this.appState, card).render())
+      // }
       return this.el
     }
   }
 
   class MainView extends AbstractiveView {
     state = {
-      loading: false,
-      searchQuery: undefined,
-      offset: 0,
-      q: "",
-      list: [],
-      numFound: 0,
+      loading: false,              // Логическое состояние загрузки
+      searchQuery: undefined,      // Поисковый запрос от пользователя
+      offset: 0,                   // Смещение для пагинации
+      search: "",                  // Запрос для поиска книг (аналог "q" в старом API)
+      results: [],                 // Список найденных книг (из "results" от Gutendex API)
+      count: 0,                    // Общее количество найденных книг (из "count" от Gutendex API)
+      favorites: []                // Избранные книги пользователя
     }
 
     constructor(appState = {}) {
@@ -1135,57 +1141,65 @@
 
     appStateHook(path) {
       if (path === "favorites") {
-        console.log(path);
+        this.render();
       }
     }
+
     async stateHook(path) {
       if (path === "searchQuery") {
         this.state.loading = true;
         const data = await this.loadList(this.state.searchQuery, this.state.offset);
         this.state.loading = false;
-        console.log(data, 'stateHook');
-        this.state.list = data?.docs || [];
-        this.state.numFound = data?.num_found || 0;
 
+        // Обработка результатов из нового API
+        this.state.results = data?.results || [];
+        this.state.count = data?.count || 0;
 
+        if (!data?.results?.length) {
+          console.warn('No results found');
+        }
       }
-      if (path === "list" || path === "loading") {
+      if (path === "results" || path === "loading") {
         this.render();
       }
     }
 
-    async loadList(q, offset) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
+    async loadList(search, offset) {
       try {
-        const res = await fetch(`https://openlibrary.org/search.json?q=${q}&offset=${offset}`);
+        const res = await fetch(`https://gutendex.com/books?search=${search}&offset=${offset}`);
+
+        if (!res.ok) {
+          throw new Error(`Error: ${res.status}`)
+        }
+
         return res.json()
 
       } catch (error) {
-        console.log(error, 'PIZDA');
+        console.log("Error fetching data:", error);
+        return { results: [], count: 0 }  // Возвращаем пустые результаты при ошибке
       }
 
     }
 
     render() {
       if (this?.appState?.favorites) {
+        console.log(this.state);
         const main = document.createElement('div');
         main.append(new Search(this.state).render());
         main.append(new CardList(this.appState, this.state).render());
-
         this.app.innerHTML = "";
         this.app.append(main);
         this.renderHeader();
-        this.appState.favorites.push('i');
-      } else {
-        console.error('favorites is non defined');
-      }
 
+      } else {
+        console.error('Favorites are not defined');
+      }
     }
+
     renderHeader() {
       const header = new Header(this.appState).render();
       this.app.prepend(header);
-
     }
-
   }
 
   class App extends MainView {
@@ -1199,6 +1213,7 @@
     }
 
     constructor() {
+      console.log("init");
       super();
       this.render();
       window.addEventListener("hashchange", this.route.bind(this));

@@ -6,7 +6,7 @@ export class Search extends DivComponent {
     this.state = state
   }
 
-  search(){
+  search() {
     const value = this.el.querySelector("input").value
     this.state.searchQuery = value
   }
@@ -24,8 +24,8 @@ export class Search extends DivComponent {
   <button aria-label='looking for'><img src="static/searcherWhite.png" alt="loop icon"></button>
 `;
     this.el.querySelector("button").addEventListener("click", this.search.bind(this));
-    this.el.querySelector("input").addEventListener("keydown", (event)=>{
-      if(event.code === "Enter"){
+    this.el.querySelector("input").addEventListener("keydown", (event) => {
+      if (event.code === "Enter") {
         this.search()
       }
     });
@@ -33,4 +33,3 @@ export class Search extends DivComponent {
     return this.el
   }
 }
-
