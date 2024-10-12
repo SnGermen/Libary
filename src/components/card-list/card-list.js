@@ -17,12 +17,7 @@ export class CardList extends DivComponent {
     }
 
     this.el.classList.add("card_list")
-    this.el.innerHTML = `<h1>Books found:${this.parentState.count || 0}</h1>`;
-    console.log("found", this.parentState)
-
-    // for (const card of this.parentState.list) {
-    //   this.el.append(new Card(this.appState, card).render())
-    // }
+    this.el.innerHTML = `<h1>Books found:${this.parentState.list?.length || 0}</h1>`;
     return this.el
   }
 }

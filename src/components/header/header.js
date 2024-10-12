@@ -24,8 +24,7 @@ export class Header extends DivComponent {
     <a href = "#" class="menu__item">
       Favorites
       <div class="menu__counter">
-        ${this.appState.favorites.length || "Nety"}
-        
+        ${this.appState.favorites.length}
       </div>
     </a>
 

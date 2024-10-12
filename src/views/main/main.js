@@ -49,14 +49,9 @@ export class MainView extends AbstractiveView {
     }
   }
 
-  async loadList(search, offset) {
+  async loadList(q, offset) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
     try {
-      const res = await fetch(`https://gutendex.com/books?search=${search}&offset=${offset}`)
-
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`)
-      }
-
+      const res = await fetch(`https://openlibrary.org/search.json?q=${q}&offset=${offset}`)
       return res.json()
 
     } catch (error) {
@@ -75,7 +70,7 @@ export class MainView extends AbstractiveView {
       this.app.innerHTML = "";
       this.app.append(main);
       this.renderHeader()
-
+      this.appState.favorites.push('i')
     } else {
       console.error('Favorites are not defined')
     }
