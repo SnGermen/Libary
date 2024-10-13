@@ -7,10 +7,10 @@ export class MainView extends AbstractiveView {
   state = {
     loading: false,
     searchQuery: undefined,
-    offset: 0,
-    q: "",
+    page: 0,
+    search: "",
     list: [],
-    numFound: 0,
+    count: 0,
   }
 
   constructor(appState = {}) {
@@ -29,11 +29,11 @@ export class MainView extends AbstractiveView {
   async stateHook(path) {
     if (path === "searchQuery") {
       this.state.loading = true
-      const data = await this.loadList(this.state.searchQuery, this.state.offset)
+      const data = await this.loadList(this.state.searchQuery, this.state.page)
       this.state.loading = false
       console.log(data, 'stateHook')
       this.state.list = data?.docs || []
-      this.state.numFound = data?.num_found || 0
+      this.state.counts = data?.count || "zeero"
 
 
     }
@@ -42,10 +42,9 @@ export class MainView extends AbstractiveView {
     }
   }
 
-  async loadList(q, offset) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
+  async loadList(search, page) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
     try {
-      const res = await fetch(`https://gutendex.com/books/?search=${q}&page=${offset}`)
-      console.log("res", res)
+      const res = await fetch(`https://gutendex.com/books/?search=${search}&page=${page}`)
       return res.json()
 
 
@@ -64,7 +63,6 @@ export class MainView extends AbstractiveView {
       this.app.innerHTML = "";
       this.app.append(main);
       this.renderHeader()
-      this.appState.favorites.push('i')
     } else {
       console.error('favorites is non defined')
     }
