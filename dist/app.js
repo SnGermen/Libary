@@ -1099,18 +1099,21 @@
       this.appState = appState;
       this.parentState = parentState;
 
+
     }
 
 
-
     render() {
+
+
       if (this.parentState.loading) {
         this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`;
         return this.el
       }
-      console.log(this.parentState.list, "render");
       this.el.classList.add("card_list");
-      this.el.innerHTML = `<h1>Books found:${this.parentState.list?.length || 0}</h1>`;
+      this.el.innerHTML = `<h1>Books found:${this.parentState.results.length || 0}</h1>`;
+      console.log(this.parentState, "render");
+
       return this.el
     }
   }
@@ -1118,10 +1121,9 @@
   class MainView extends AbstractiveView {
     state = {
       loading: false,
-      searchQuery: undefined,
       page: 0,
       search: "",
-      list: [],
+      results: [],
       count: 0,
     }
 
@@ -1141,22 +1143,25 @@
     async stateHook(path) {
       if (path === "searchQuery") {
         this.state.loading = true;
-        const data = await this.loadList(this.state.searchQuery, this.state.page);
+        const data = await this.loadList(this.state.searchQuery,);  //this.state.page
         this.state.loading = false;
         console.log(data, 'stateHook');
-        this.state.list = data?.docs || [];
-        this.state.counts = data?.count || "zeero";
+        this.state.results = data?.results || [];
+        this.state.count = data?.count || "zeero";
+        console.log(this.state.count, 'COUNT');
+        console.log(this.state.results, "RESULT");
+
 
 
       }
-      if (path === "list" || path === "loading") {
+      if (path === "results" || path === "loading") {
         this.render();
       }
     }
 
     async loadList(search, page) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
       try {
-        const res = await fetch(`https://gutendex.com/books/?search=${search}&page=${page}`);
+        const res = await fetch(`https://gutendex.com/books/?search=${search}`);
         return res.json()
 
 
@@ -1178,6 +1183,8 @@
       } else {
         console.error('favorites is non defined');
       }
+
+
 
     }
     renderHeader() {

@@ -6,18 +6,21 @@ export class CardList extends DivComponent {
     this.appState = appState
     this.parentState = parentState
 
+
   }
 
 
-
   render() {
+
+
     if (this.parentState.loading) {
       this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`
       return this.el
     }
-    console.log(this.parentState.list, "render")
     this.el.classList.add("card_list")
-    this.el.innerHTML = `<h1>Books found:${this.parentState.list?.length || 0}</h1>`;
+    this.el.innerHTML = `<h1>Books found:${this.parentState.results.length || 0}</h1>`;
+    console.log(this.parentState, "render")
+
     return this.el
   }
 }
