@@ -21,6 +21,9 @@ export class CardList extends DivComponent {
     this.el.innerHTML = `<h1>Books found:${this.parentState.results.length || 0}</h1>`;
     console.log(this.parentState, "render")
 
+
+
+
     return this.el
   }
 }

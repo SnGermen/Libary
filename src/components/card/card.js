@@ -22,30 +22,30 @@ export class Card extends DivComponent {
     const existsInFavorites = this.appState.favorites.find(
       b => b.key == this.cardState.key
     )
+    const coverImage = this.cardState.formats['image/jpeg'] || this.cardState.formats['image/png'] || 'path/to/placeholder.jpg';
+    console.log("imagen", coverImage)
     this.el.innerHTML = `
-<div class="card__image">
-  <img src="https://covers.openlibrary.org/b/olid/${this.cardState.cover_edition_key}-M.jpg" alt="Oblozhka">
-</div>
+
 <div class="card__info">
   <div class="card__tag">
-    ${this.cardState.subject ? this.cardState.subject[0] : "Не задано"}
+    ${this.cardState.subjects ? this.cardState.subjects[0] : "Не задано"}
   </div>
   <div class="card__name">
     ${this.cardState.title}
   </div>
   <div class="card__author">
-    ${this.cardState.author_name ? this.cardState.author_name[0] : "Не задано"}
+    ${this.cardState.authors ? this.cardState.authors[0] : "Не задано"}
   </div>
 
-<div class="card__footer">
+ <div class="card__footer">
   <button class="button__add ${existsInFavorites ? 'button__active' : ''}">
     ${existsInFavorites
         ? '<img src="/static/favorites.png" />'
         : '<img src="/static/favorite-white.png" />'}
   </button>
-</div>
-</div>
-`;
+ </div>
+ </div>
+ `
     if (existsInFavorites) {
       this.el.querySelector("button").addEventListener("click", this.#deleteFromeFavorites.bind(this))
     } else {
@@ -55,4 +55,5 @@ export class Card extends DivComponent {
 
     return this.el
   }
+
 }

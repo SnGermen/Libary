@@ -26,12 +26,13 @@ export class MainView extends AbstractiveView {
     }
   }
   async stateHook(path) {
-    if (path === "searchQuery") {
+    if (path == "searchQuery") {
       this.state.loading = true
       const data = await this.loadList(this.state.searchQuery,)  //this.state.page
       this.state.loading = false
       console.log(data, 'stateHook')
       this.state.results = data?.results || []
+      console.log(this.state.results, "34")
       this.state.count = data?.count || "zeero"
       console.log(this.state.count, 'COUNT')
       console.log(this.state.results, "RESULT")
@@ -39,7 +40,7 @@ export class MainView extends AbstractiveView {
 
 
     }
-    if (path === "results" || path === "loading") {
+    if (path == "results" || path == "loading") {
       this.render()
     }
   }

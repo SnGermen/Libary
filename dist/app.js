@@ -1022,7 +1022,9 @@
     }
     render() {
       this.el;
+
     }
+
   }
 
   class Header extends DivComponent {
@@ -1114,6 +1116,9 @@
       this.el.innerHTML = `<h1>Books found:${this.parentState.results.length || 0}</h1>`;
       console.log(this.parentState, "render");
 
+
+
+
       return this.el
     }
   }
@@ -1141,12 +1146,13 @@
       }
     }
     async stateHook(path) {
-      if (path === "searchQuery") {
+      if (path == "searchQuery") {
         this.state.loading = true;
         const data = await this.loadList(this.state.searchQuery,);  //this.state.page
         this.state.loading = false;
         console.log(data, 'stateHook');
         this.state.results = data?.results || [];
+        console.log(this.state.results, "34");
         this.state.count = data?.count || "zeero";
         console.log(this.state.count, 'COUNT');
         console.log(this.state.results, "RESULT");
@@ -1154,7 +1160,7 @@
 
 
       }
-      if (path === "results" || path === "loading") {
+      if (path == "results" || path == "loading") {
         this.render();
       }
     }
