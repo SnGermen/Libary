@@ -9,8 +9,8 @@ export class Card extends DivComponent {
   }
   #addToFavorites() {
     this.appState.favorites.push(this.cardState)
-  }
 
+  }
   #deleteFromeFavorites() {
     this.appState.favorites = this.appState.favorites.filter(
       b => b.key !== this.cardState.key
@@ -18,14 +18,15 @@ export class Card extends DivComponent {
   }
 
   render() {
-    this.el.classList.add("card")
+    this.el.classList.add('card')
     const existsInFavorites = this.appState.favorites.find(
       b => b.key == this.cardState.key
     )
     const coverImage = this.cardState.formats['image/jpeg'] || this.cardState.formats['image/png'] || 'path/to/placeholder.jpg';
-    console.log("imagen", coverImage)
     this.el.innerHTML = `
-
+ <div class="card__image">
+   <img src="${coverImage}" alt="Oblozhka">
+ </div>
 <div class="card__info">
   <div class="card__tag">
     ${this.cardState.subjects ? this.cardState.subjects[0] : "Не задано"}
@@ -34,7 +35,7 @@ export class Card extends DivComponent {
     ${this.cardState.title}
   </div>
   <div class="card__author">
-    ${this.cardState.authors ? this.cardState.authors[0] : "Не задано"}
+${this.cardState.authors && this.cardState.authors.length > 0 ? this.cardState.authors[0].name : 'Unknown Author'}
   </div>
 
  <div class="card__footer">
@@ -45,14 +46,19 @@ export class Card extends DivComponent {
   </button>
  </div>
  </div>
+  
+
  `
     if (existsInFavorites) {
-      this.el.querySelector("button").addEventListener("click", this.#deleteFromeFavorites.bind(this))
+      this.el
+        .querySelector("button")
+        .addEventListener("click", this.#deleteFromeFavorites.bind(this))
     } else {
-      this.el.querySelector("button").addEventListener("click", this.#addToFavorites.bind(this))
+      this.el
+        .querySelector("button")
+        .addEventListener("click", this.#addToFavorites.bind(this))
 
     }
-
     return this.el
   }
 

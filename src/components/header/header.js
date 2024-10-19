@@ -4,6 +4,7 @@ export class Header extends DivComponent {
   constructor(appState) {
     super()
     this.appState = appState
+
   }
 
 
@@ -24,7 +25,8 @@ export class Header extends DivComponent {
       <img src="static/favorites.png" alt="favorites_icon" class="menu_favorites">
       Favorites
       <div class="menu__counter">
-        ${this.appState.favorites.length || "no"}
+        ${this.appState.favorites.length}
+
       </div>
     </a>
 

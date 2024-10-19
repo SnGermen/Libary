@@ -1031,6 +1031,7 @@
     constructor(appState) {
       super();
       this.appState = appState;
+
     }
 
 
@@ -1051,7 +1052,8 @@
       <img src="static/favorites.png" alt="favorites_icon" class="menu_favorites">
       Favorites
       <div class="menu__counter">
-        ${this.appState.favorites.length || "no"}
+        ${this.appState.favorites.length}
+
       </div>
     </a>
 
@@ -1095,18 +1097,81 @@
     }
   }
 
+  class Card extends DivComponent {
+    constructor(appState, cardState) {
+      super();
+      this.appState = appState;
+      this.cardState = cardState;
+
+    }
+    #addToFavorites() {
+      this.appState.favorites.push(this.cardState);
+
+    }
+    #deleteFromeFavorites() {
+      this.appState.favorites = this.appState.favorites.filter(
+        b => b.key !== this.cardState.key
+      );
+    }
+
+    render() {
+      this.el.classList.add('card');
+      const existsInFavorites = this.appState.favorites.find(
+        b => b.key == this.cardState.key
+      );
+      const coverImage = this.cardState.formats['image/jpeg'] || this.cardState.formats['image/png'] || 'path/to/placeholder.jpg';
+      this.el.innerHTML = `
+ <div class="card__image">
+   <img src="${coverImage}" alt="Oblozhka">
+ </div>
+<div class="card__info">
+  <div class="card__tag">
+    ${this.cardState.subjects ? this.cardState.subjects[0] : "Не задано"}
+  </div>
+  <div class="card__name">
+    ${this.cardState.title}
+  </div>
+  <div class="card__author">
+${this.cardState.authors && this.cardState.authors.length > 0 ? this.cardState.authors[0].name : 'Unknown Author'}
+  </div>
+
+ <div class="card__footer">
+  <button class="button__add ${existsInFavorites ? 'button__active' : ''}">
+    ${existsInFavorites
+        ? '<img src="/static/favorites.png" />'
+        : '<img src="/static/favorite-white.png" />'}
+  </button>
+ </div>
+ </div>
+  
+
+ `;
+      if (existsInFavorites) {
+        this.el
+          .querySelector("button")
+          .addEventListener("click", this.#deleteFromeFavorites.bind(this));
+      } else {
+        this.el
+          .querySelector("button")
+          .addEventListener("click", this.#addToFavorites.bind(this));
+
+      }
+      return this.el
+    }
+
+  }
+
   class CardList extends DivComponent {
     constructor(appState, parentState) {
       super();
       this.appState = appState;
       this.parentState = parentState;
-
-
     }
 
 
-    render() {
 
+
+    render() {
 
       if (this.parentState.loading) {
         this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`;
@@ -1114,11 +1179,10 @@
       }
       this.el.classList.add("card_list");
       this.el.innerHTML = `<h1>Books found:${this.parentState.results.length || 0}</h1>`;
-      console.log(this.parentState, "render");
 
-
-
-
+      for (const card of this.parentState.results) {
+        this.el.append(new Card(this.appState, card).render());
+      }
       return this.el
     }
   }
@@ -1142,7 +1206,7 @@
 
     appStateHook(path) {
       if (path === "favorites") {
-        console.log(path);
+        this.render();
       }
     }
     async stateHook(path) {
@@ -1150,17 +1214,13 @@
         this.state.loading = true;
         const data = await this.loadList(this.state.searchQuery,);  //this.state.page
         this.state.loading = false;
-        console.log(data, 'stateHook');
         this.state.results = data?.results || [];
-        console.log(this.state.results, "34");
         this.state.count = data?.count || "zeero";
-        console.log(this.state.count, 'COUNT');
-        console.log(this.state.results, "RESULT");
 
 
 
       }
-      if (path == "results" || path == "loading") {
+      if (path === "results" || path === "loading") {
         this.render();
       }
     }
