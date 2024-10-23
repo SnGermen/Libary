@@ -1102,26 +1102,27 @@
       super();
       this.appState = appState;
       this.cardState = cardState;
-
     }
     #addToFavorites() {
       this.appState.favorites.push(this.cardState);
-
     }
     #deleteFromeFavorites() {
       this.appState.favorites = this.appState.favorites.filter(
-        b => b.key !== this.cardState.key
+        (b) => b.id !== this.cardState.id
       );
     }
 
     render() {
-      this.el.classList.add('card');
+      this.el.classList.add("card");
 
       const existsInFavorites = this.appState.favorites.find(
-        b => b.key == this.cardState.key
+        (b) => b.id == this.cardState.id
       );
 
-      const coverImage = this.cardState.formats['image/jpeg'] || this.cardState.formats['image/png'] || 'path/to/placeholder.jpg';
+      const coverImage =
+        this.cardState.formats["image/jpeg"] ||
+        this.cardState.formats["image/png"] ||
+        "path/to/placeholder.jpg";
 
       this.el.innerHTML = `
       <div class="card__image">
@@ -1135,18 +1136,25 @@
           ${this.cardState.title}
         </div>
         <div class="card__author">
-          ${this.cardState.authors && this.cardState.authors.length > 0 ? this.cardState.authors[0].name : 'Unknown Author'}
+          ${this.cardState.authors && this.cardState.authors.length > 0
+        ? this.cardState.authors[0].name
+        : "Unknown Author"
+      }
         </div>
         <div class="card__footer">
-          <button class="button__add ${existsInFavorites ? 'button__active' : ''}" data-key="${this.cardState.key}">
+          <button class="button__add ${existsInFavorites ? "button__active" : ""
+      }" data-test="${this.cardState.id}">
             ${existsInFavorites
         ? '<img src="/static/favorites.png" />'
-        : '<img src="/static/favorite-white.png" />'}
+        : '<img src="/static/favorite-white.png" />'
+      }
           </button>
         </div>
     `;
 
-      const button = this.el.querySelector(`button[data-key="${this.cardState.key}"]`);
+      const button = this.el.querySelector(
+        `button[data-test="${this.cardState.id}"]`
+      );
 
       if (existsInFavorites) {
         button.addEventListener("click", this.#deleteFromeFavorites.bind(this));
@@ -1191,6 +1199,7 @@
       search: "",
       results: [],
       count: 0,
+
     }
 
     constructor(appState = {}) {

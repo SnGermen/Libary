@@ -10,6 +10,7 @@ export class MainView extends AbstractiveView {
     search: "",
     results: [],
     count: 0,
+
   }
 
   constructor(appState = {}) {
