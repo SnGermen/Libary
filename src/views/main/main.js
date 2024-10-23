@@ -58,16 +58,12 @@ export class MainView extends AbstractiveView {
       const main = document.createElement('div');
       main.append(new Search(this.state).render())
       main.append(new CardList(this.appState, this.state).render())
-
       this.app.innerHTML = "";
       this.app.append(main);
       this.renderHeader()
     } else {
       console.error('favorites is non defined')
     }
-
-
-
   }
   renderHeader() {
     const header = new Header(this.appState).render()
