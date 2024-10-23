@@ -1048,7 +1048,7 @@
       <img src="static/search.png" alt="search_icon" class="menu_search">
       Book search
     </a>
-    <a href = "#" class="menu__item">
+    <a href = "#favorites" class="menu__item">
       <img src="static/favorites.png" alt="favorites_icon" class="menu_favorites">
       Favorites
       <div class="menu__counter">
@@ -1108,7 +1108,7 @@
     }
     #deleteFromeFavorites() {
       this.appState.favorites = this.appState.favorites.filter(
-        (b) => b.id !== this.cardState.id
+        (b) => b.id !== this.cardState.id //here
       );
     }
 
@@ -1143,7 +1143,7 @@
         </div>
         <div class="card__footer">
           <button class="button__add ${existsInFavorites ? "button__active" : ""
-      }" data-test="${this.cardState.id}">
+      }" data-id="${this.cardState.id}">
             ${existsInFavorites
         ? '<img src="/static/favorites.png" />'
         : '<img src="/static/favorite-white.png" />'
@@ -1152,8 +1152,8 @@
         </div>
     `;
 
-      const button = this.el.querySelector(
-        `button[data-test="${this.cardState.id}"]`
+      const button = this.el.querySelector( // el - нужно
+        `button[data-id="${this.cardState.id}"]`
       );
 
       if (existsInFavorites) {
@@ -1182,11 +1182,14 @@
         this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`;
         return this.el
       }
-      this.el.classList.add("card_list");
-      this.el.innerHTML = `<h1>Books found:${this.parentState.results.length || 0}</h1>`;
 
+
+
+      const cartGrid = document.createElement("div");
+      cartGrid.classList.add("card_grid");
+      this.el.append(cartGrid);
       for (const card of this.parentState.results) {
-        this.el.append(new Card(this.appState, card).render());
+        cartGrid.append(new Card(this.appState, card).render());
       }
       return this.el
     }
@@ -1208,6 +1211,11 @@
       this.appState = onChange(this.appState, this.appStateHook.bind(this));
       this.state = onChange(this.state, this.stateHook.bind(this));
       this.setTitle("Book Search");
+    }
+    destroy() {
+      onChange.unsubscribe(this.appState);
+      onChange.unsubscribe(this.state);
+
     }
 
     appStateHook(path) {
@@ -1231,7 +1239,7 @@
       }
     }
 
-    async loadList(search, page) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
+    async loadList(search) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
       try {
         const res = await fetch(`https://gutendex.com/books/?search=${search}`);
         return res.json()
@@ -1246,8 +1254,54 @@
     render() {
       if (this?.appState?.favorites) {
         const main = document.createElement('div');
+        main.innerHTML = `<h1>Books found:${this
+        .state
+        .results
+        .length || 0}</h1>`;
         main.append(new Search(this.state).render());
         main.append(new CardList(this.appState, this.state).render());
+        this.app.innerHTML = "";
+        this.app.append(main);
+        this.renderHeader();
+      } else {
+        console.error('favorites is non defined');
+      }
+    }
+    renderHeader() {
+      const header = new Header(this.appState).render();
+      this.app.prepend(header);
+
+    }
+
+  }
+
+  class FavoritesView extends AbstractiveView {
+    //Все состояние лежит в app.js
+
+    constructor(appState = {}) {
+      super();
+      this.appState = appState;
+      this.appState = onChange(this.appState, this.appStateHook.bind(this));
+      this.setTitle("Favorites");
+    }
+    destroy() {
+      onChange.unsubscribe(this.appState);
+
+    }
+
+    appStateHook(path) {
+      if (path === "favorites") {
+        this.render();
+      }
+    }
+
+
+
+    render() {
+      if (this?.appState?.favorites) {
+        const main = document.createElement('div');
+        main.innerHTML = '<h1>Books favorites';
+        main.append(new CardList(this.appState, { list: this.appState.favorites }).render());
         this.app.innerHTML = "";
         this.app.append(main);
         this.renderHeader();
@@ -1266,6 +1320,9 @@
   class App extends MainView {
     routes = [
       { path: "", view: MainView },
+      { path: "#favorites", view: FavoritesView },
+
+
 
     ]
 

@@ -17,11 +17,14 @@ export class CardList extends DivComponent {
       this.el.innerHTML = `<div class="card_list__loader">Loading...</div>`;
       return this.el
     }
-    this.el.classList.add("card_list")
-    this.el.innerHTML = `<h1>Books found:${this.parentState.results.length || 0}</h1>`;
 
+
+
+    const cartGrid = document.createElement("div")
+    cartGrid.classList.add("card_grid")
+    this.el.append(cartGrid)
     for (const card of this.parentState.results) {
-      this.el.append(new Card(this.appState, card).render())
+      cartGrid.append(new Card(this.appState, card).render())
     }
     return this.el
   }

@@ -21,7 +21,7 @@ export class Header extends DivComponent {
       <img src="static/search.png" alt="search_icon" class="menu_search">
       Book search
     </a>
-    <a href = "#" class="menu__item">
+    <a href = "#favorites" class="menu__item">
       <img src="static/favorites.png" alt="favorites_icon" class="menu_favorites">
       Favorites
       <div class="menu__counter">

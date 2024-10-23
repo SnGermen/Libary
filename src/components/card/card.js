@@ -11,7 +11,7 @@ export class Card extends DivComponent {
   }
   #deleteFromeFavorites() {
     this.appState.favorites = this.appState.favorites.filter(
-      (b) => b.id !== this.cardState.id
+      (b) => b.id !== this.cardState.id //here
     );
   }
 
@@ -46,7 +46,7 @@ export class Card extends DivComponent {
         </div>
         <div class="card__footer">
           <button class="button__add ${existsInFavorites ? "button__active" : ""
-      }" data-test="${this.cardState.id}">
+      }" data-id="${this.cardState.id}">
             ${existsInFavorites
         ? '<img src="/static/favorites.png" />'
         : '<img src="/static/favorite-white.png" />'
@@ -55,8 +55,8 @@ export class Card extends DivComponent {
         </div>
     `;
 
-    const button = this.el.querySelector(
-      `button[data-test="${this.cardState.id}"]`
+    const button = this.el.querySelector( // el - нужно
+      `button[data-id="${this.cardState.id}"]`
     );
 
     if (existsInFavorites) {

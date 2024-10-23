@@ -20,6 +20,11 @@ export class MainView extends AbstractiveView {
     this.state = onChange(this.state, this.stateHook.bind(this))
     this.setTitle("Book Search")
   }
+  destroy() {
+    onChange.unsubscribe(this.appState)
+    onChange.unsubscribe(this.state)
+
+  }
 
   appStateHook(path) {
     if (path === "favorites") {
@@ -42,7 +47,7 @@ export class MainView extends AbstractiveView {
     }
   }
 
-  async loadList(search, page) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
+  async loadList(search) { //Глобальный метод fetch() запускает процесс извлечения ресурса из сети
     try {
       const res = await fetch(`https://gutendex.com/books/?search=${search}`)
       return res.json()
@@ -57,6 +62,10 @@ export class MainView extends AbstractiveView {
   render() {
     if (this?.appState?.favorites) {
       const main = document.createElement('div');
+      main.innerHTML = `<h1>Books found:${this
+        .state
+        .results
+        .length || 0}</h1>`;
       main.append(new Search(this.state).render())
       main.append(new CardList(this.appState, this.state).render())
       this.app.innerHTML = "";
