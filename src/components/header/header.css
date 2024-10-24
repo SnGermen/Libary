@@ -5,13 +5,11 @@
   margin-bottom: 30px;
   margin-top: 20px;
 }
-
 .menu{
   display: flex;
   align-items: center;
   gap: 30px;
 }
-
 .menu__item{
   display: flex;
   align-items: center;
@@ -20,11 +18,9 @@
   text-decoration: none;
   
 }
-
 .menu__item:visited{
   color: var(--black);
 }
-
 .menu__counter{
 font-size: 12px;
 font-weight: 600;

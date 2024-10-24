@@ -45,7 +45,7 @@ export class Card extends DivComponent {
       }
         </div>
         <div class="card__footer">
-          <button class="button__add ${existsInFavorites ? "button__active" : ""
+          <button class="card__button_add ${existsInFavorites ? "card__button_active" : ""
       }" data-id="${this.cardState.id}">
             ${existsInFavorites
         ? '<img src="/static/favorites.png" />'
@@ -54,7 +54,6 @@ export class Card extends DivComponent {
           </button>
         </div>
     `;
-
     const button = this.el.querySelector( // el - нужно
       `button[data-id="${this.cardState.id}"]`
     );
@@ -64,7 +63,6 @@ export class Card extends DivComponent {
     } else {
       button.addEventListener("click", this.#addToFavorites.bind(this));
     }
-
     return this.el;
   }
 }

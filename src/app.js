@@ -5,9 +5,6 @@ class App extends MainView {
   routes = [
     { path: "", view: MainView },
     { path: "#favorites", view: FavoritesView },
-
-
-
   ]
 
   appState = {

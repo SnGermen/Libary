@@ -58,7 +58,6 @@ export class MainView extends AbstractiveView {
     }
 
   }
-
   render() {
     if (this?.appState?.favorites) {
       const main = document.createElement('div');

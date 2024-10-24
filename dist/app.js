@@ -1301,7 +1301,7 @@
       if (this?.appState?.favorites) {
         const main = document.createElement('div');
         main.innerHTML = '<h1>Books favorites';
-        main.append(new CardList(this.appState, { list: this.appState.favorites }).render());
+        main.append(new CardList(this.appState, { results: this.appState.favorites }).render());
         this.app.innerHTML = "";
         this.app.append(main);
         this.renderHeader();
